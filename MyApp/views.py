@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Application,Represantative, SelctionOfCommittee
+from .models import Application,Represantative, SelctionOfCommittee, TeamOfficials
 from django.contrib import messages
 
 
@@ -38,7 +38,48 @@ def CreateApp(request):
          
         
         
-    return redirect("ViewDetails", ApplicationId= application.ApplicationId)
+    return redirect("AddRepp", ApplicationId= application.ApplicationId)
+
+def TeamOfficial_view(request, ApplicationId):
+    if request.method =='GET':
+    
+     return render(request, 'MyApp/TeamOfficial_view.html')
+ 
+    if request.method == 'POST':
+
+        team = TeamOfficials.objects.create(
+        TeamOffName = request.POST['TeamOffName'],
+        TeamOffSurname = request.POST['TeamOffSurname'],
+        TeamOfficialId = request.POST['TeamOfficialId'],
+        Gender = request.POST['Gender'],
+        Designation = request.POST['Designation'],
+        
+    )
+    messages.success(request, 'The information has been saved')
+    return redirect("MemberSelection", ApplicationId = team.ApplicationId)
+
+
+def AddRepp(request,ApplicationId):
+    
+    application =get_object_or_404(Application, pk =ApplicationId )
+        
+    if request.method == 'GET':
+        
+        return render(request, 'MyApp/AddRepp.html')
+        
+    if request.method == 'POST':
+            
+            application = Represantative.objects.create(     
+        
+            FirstName = request.POST['FirstName'],
+            Surname = request.POST['Surname'],
+            Gender = request.POST['Gender'],
+            PhoneNumber = request.POST['PhoneNumber'],
+            Email = request.POST['Email'],
+            RepresanativeLeve = request.POST['RepresanativeLeve'],
+        )
+            
+    return redirect("AddRepp",ApplicationId=application.ApplicationId,)
 
 
 def ViewDetails(request, ApplicationId):
@@ -114,28 +155,14 @@ def UpdateDetails(request, ApplicationId):
         return redirect("UpdateDetails", ApplicationId = application.ApplicationId)
             
             
-def AddRepp(request):
-        
-    if request.method == 'GET':
-        
-        
-        
-        return render(request, 'MyApp/AddRepp.html')
-        
-    if request.method == 'POST':
-            
-        Rep = Represantative.objects.create(     
-            RepresantativeId = request.POST['RepresantativeId'],
-           
-            FirstName = request.POST['FirstName'],
-            Surname = request.POST['Surname'],
-            Gender = request.POST['Gender'],
-            PhoneNumber = request.POST['PhoneNumber'],
-            Email = request.POST['Email'],
-            RepresanativeLeve = request.POST['RepresanativeLeve'],
-        )
-            
-    return redirect("RepDetails",RepresantativeId=Rep.RepresantativeId)
+
+
+def Added_Represantative_list(request):
+    queryset = Represantative.objects.all()
+    context = {
+        "Rep_List":queryset
+    }
+    return render(request,"MyApp/AddRepp.html", context)
 
 def RepDetails(request, RepresantativeId):
     
@@ -162,13 +189,49 @@ def MemberSelection(request):
         
     return redirect("CommitteeMemberDetails",MemberId=obj.MemberId)
 
-
 def CommitteeMemberDetails(request, MemberId):
     
     obj = get_object_or_404(SelctionOfCommittee, pk= MemberId)
     print(obj)
     
     return render(request, 'MyApp/CommitteeMemberDetails.html', {"obj":obj})
+
+def UpdateCommitteeDetails(request, MemberId):
+    obj = get_object_or_404(SelctionOfCommittee, pk = MemberId)
+    if request.method == 'GET':
+        
+        return render(request, 'MyApp/UpdateCommitteeDetails.html',{"obj":obj})
+    
+    if request.method == 'POST':
+        
+        numUpdate = 0
+        
+        if request.POST["MemberId"] != obj.MemberId:
+            obj.MemberId = request.POST["MemberId"]
+            numUpdate +=1
+            
+        if request.POST["Name"] != obj.Name:
+            obj.Name = request.POST["name"]
+            numUpdate +=2
+            
+        if request.POST["Surname"] != obj.Surname:
+            request.POST["Gender"] = obj.Name
+            numUpdate +=1
+            
+        if numUpdate > 0:
+            obj.save()
+            messages.success(request, f'{numUpdate} changes made')
+        else:
+            messages.success(request, '' +numUpdate + 'changes made.')
+            return redirect("UpdateCommitteeDetails", MemberId = obj.MemberId)
+    
+    
+
+def AddMember(request):
+    if request.method == 'GET':
+        
+        return render(request, 'MyApp/MemberSelection.html')
+    
          
          
             

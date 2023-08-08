@@ -19,7 +19,9 @@ class Application(models.Model):
     
 
 class Represantative(models.Model):
+    
     RepresantativeId = models.AutoField(primary_key=True,)
+    ApplicationId = models.ForeignKey(Application, on_delete=models.CASCADE,null=False,blank=False)
     FirstName = models.CharField(max_length=255)
     Surname =models.CharField(max_length=255)
     Gender = models.CharField(max_length=255)
@@ -34,14 +36,20 @@ class Represantative(models.Model):
     IDCopySiubmited = models.TextField(default= "null",blank=False,null=False)
     AcceptanceofTeamAppointment = models.TextField(default= "null",blank=False,null=False)
     
-
+class TeamOfficials(models.Model):
+    TeamOfficialId = models.AutoField(primary_key=True)
+    ApplicationId = models.ForeignKey(Application, on_delete=models.CASCADE)
+    TeamOffName = models.CharField(max_length=255)
+    TeamOffSurname = models.CharField(max_length=255)
+    Gender = models.CharField(max_length=255)
+    Designation = models.CharField(max_length=255)
 class SelctionOfCommittee(models.Model):
     
     MemberId = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=255)
     Surname = models.CharField(max_length=255)
     Gender = models.CharField(max_length=255)
-    
+   
     
 
 

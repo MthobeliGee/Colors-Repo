@@ -55,7 +55,7 @@ ROOT_URLCONF = 'Main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [r"C:\Users\INTERN\OneDrive\Colors\Main\MyApp\template"],
+        'DIRS': [r'C:\Users\INTERN\OneDrive\GitClone\Colors-Repo\MyApp\template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
